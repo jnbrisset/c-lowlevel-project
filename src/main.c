@@ -14,14 +14,16 @@ void print_usage(char *argv[]) {
 	return;
 }
 
-int main(int argc, char *argv[]) { 
+int main(int argc, char *argv[]) {
 	char *filepath = NULL;
 	bool newfile = false;
+	char *addstring = NULL;
 	int c;
     int dbfd = -1;
 	struct dbheader_t *dbhdr = NULL;
+	struct employee_t *employees = NULL;
 
-	while ((c = getopt(argc, argv, "nf:")) != -1 ) {
+	while ((c = getopt(argc, argv, "nf:a:")) != -1 ) {
 		switch (c) {
 			case 'n':
 				newfile = true;
@@ -29,9 +31,12 @@ int main(int argc, char *argv[]) {
 			case 'f':
 				filepath = optarg;
 				break;
+			case 'a':
+				addstring = optarg;
+				break;
 			case '?':
 				printf("Unknown option -%c\n", c);
-				break;
+				break;	
 			default:
 				return -1;
 		}
@@ -67,9 +72,17 @@ int main(int argc, char *argv[]) {
 		}
     }
 
-	printf("Newfile: %d\n", newfile);
-	printf("Filepath: %s\n", filepath);
-	
+	if (read_employees(dbfd, dbhdr, &employees) != STATUS_SUCCESS) {
+		printf("failed to read employees.\n");
+		return 0;
+	}
+
+	if (addstring) {
+		dbhdr->count++;
+		employees = realloc(employees, (dbhdr->count*sizeof(struct employee_t)));
+		add_employee(dbhdr, employees, addstring);
+	}
+
 	if (output_file(dbfd, dbhdr, NULL) == STATUS_ERROR) {
 		return -1;
 	}

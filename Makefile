@@ -6,7 +6,7 @@ run: clean default
 	./$(TARGET)
 	./$(TARGET) -f ./mynewdb2.db -n
 	./$(TARGET) -f ./mynewdb2.db
-#	./$(TARGET) -f ./mynewdb.db -a "Timmy H.,123 Sheshire Ln.,120"
+	./$(TARGET) -f ./mynewdb2.db -a "Timmy H.,123 Sheshire Ln.,120"
 
 default: $(TARGET)
 
@@ -19,6 +19,6 @@ $(TARGET): $(OBJ)
 	gcc -o $@ $?
 
 obj/%.o : src/%.c
-	gcc -c $< -o $@ -Iinclude
+	gcc -c -g $< -o $@ -Iinclude
 
 
