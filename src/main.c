@@ -19,12 +19,13 @@ int main(int argc, char *argv[]) {
 	bool newfile = false;
 	char *addstring = NULL;
 	bool list = false;
+	char *updatestring = NULL;  	// Comma separated value "Timmy H.,150"
 	int c;
     int dbfd = -1;
 	struct dbheader_t *dbhdr = NULL;
 	struct employee_t *employees = NULL;
 
-	while ((c = getopt(argc, argv, "nf:a:l")) != -1 ) {
+	while ((c = getopt(argc, argv, "nf:a:u:l")) != -1 ) {
 		switch (c) {
 			case 'n':
 				newfile = true;
@@ -37,6 +38,9 @@ int main(int argc, char *argv[]) {
 				break;
 			case 'l':
 				list = true;
+				break;
+			case 'u':
+				updatestring = optarg;
 				break;
 			case '?':
 				printf("Unknown option -%c\n", c);
@@ -84,7 +88,17 @@ int main(int argc, char *argv[]) {
 	if (addstring) {
 		dbhdr->count++;
 		employees = realloc(employees, (dbhdr->count*sizeof(struct employee_t)));
-		add_employee(dbhdr, employees, addstring);
+		if (add_employee(dbhdr, employees, addstring) == STATUS_ERROR) {
+			printf("Adding employee failed.\n");
+			return 0;
+		}
+	}
+
+	if (updatestring) {
+		if (update_hours(dbhdr, employees, updatestring) == STATUS_ERROR) {
+			printf("Updating employee hours failed. Employee not found.\n");
+			return 0;
+		}	
 	}
 
 	if (list) {

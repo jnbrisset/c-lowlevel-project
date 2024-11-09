@@ -17,6 +17,8 @@ run: clean default
 	done
 	./$(TARGET) -f $(DBFILE) -l
 	./$(TARGET) -f $(DBFILE) -a "Bob B.,123 Elm St.,40" -l
+	./$(TARGET) -f $(DBFILE) -u "Jane S.,160" -l
+	./$(TARGET) -f $(DBFILE) -u "Jonny D.,180" -l
 
 default: $(TARGET)
 

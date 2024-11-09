@@ -21,19 +21,37 @@ void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
 }
 
 int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *addstring) {
-    printf("%s\n", addstring);
-
     char *name = strtok(addstring, ",");
     char *addr = strtok(NULL, ",");
     char *hours = strtok(NULL, ",");
-
-    printf("%s %s %s\n", name, addr, hours);
     
     strncpy(employees[dbhdr->count-1].name, name, sizeof(employees[dbhdr->count-1].name));
     strncpy(employees[dbhdr->count-1].address, addr, sizeof(employees[dbhdr->count-1].address));
     employees[dbhdr->count-1].hours = atoi(hours);
 
     return STATUS_SUCCESS;
+}
+
+int update_hours(struct dbheader_t *dbhdr, struct employee_t *employees, char *updatestring) {
+    char *name = strtok(updatestring, ",");
+    char *hours = strtok(NULL, ",");
+
+    int idx = search_for_employee(dbhdr, employees, name);
+    if (idx == -1) {
+        return STATUS_ERROR;
+    } else {
+        employees[idx].hours = atoi(hours);
+    }
+}
+
+int search_for_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *employee) {
+    // The integer returned is the rank id of the employee in the database. -1 if no match
+    for (int i=0; i < dbhdr->count; i++) {
+        if (!strcoll(employee, employees[i].name))
+            return i;
+    }    
+
+    return -1;
 }
 
 int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employeesOut) {
