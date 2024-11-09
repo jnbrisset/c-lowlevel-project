@@ -1,12 +1,22 @@
 TARGET = bin/dbview
 SRC = $(wildcard src/*.c)
 OBJ = $(patsubst src/%.c, obj/%.o, $(SRC))
+DBFILE = ./mynewdb2.db
+EMPLOYEES = \
+	"Timmy H.,123 Sheshire Ln.,120" \
+	"JimmyJohn D.,456 Elm St.,80" \
+    "Jane S.,789 Maple Ave.,100" \
+    "Alice B.,101 Oak Dr.,90"
 
 run: clean default
 	./$(TARGET)
-	./$(TARGET) -f ./mynewdb2.db -n
-	./$(TARGET) -f ./mynewdb2.db
-	./$(TARGET) -f ./mynewdb2.db -a "Timmy H.,123 Sheshire Ln.,120"
+	./$(TARGET) -f $(DBFILE) -n
+	./$(TARGET) -f $(DBFILE)
+	@for employee in $(EMPLOYEES); do \
+ 		./$(TARGET) -f $(DBFILE) -a "$$employee"; \
+	done
+	./$(TARGET) -f $(DBFILE) -l
+	./$(TARGET) -f $(DBFILE) -a "Bob B.,123 Elm St.,40" -l
 
 default: $(TARGET)
 
