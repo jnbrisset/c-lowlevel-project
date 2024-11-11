@@ -21,6 +21,7 @@ run: clean default
 	./$(TARGET) -f $(DBFILE) -u "Jonny D.,180" -l
 	./$(TARGET) -f $(DBFILE) -d "Jane S." -l
 	./$(TARGET) -f $(DBFILE) -d "Alice G." -l
+	valgrind --leak-check=full ./$(TARGET) -f $(DBFILE) -l
 
 default: $(TARGET)
 

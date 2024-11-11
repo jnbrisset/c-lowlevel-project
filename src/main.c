@@ -121,5 +121,8 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 
+	free(dbhdr);
+	free(employees);
+
 	return 0;
 }
