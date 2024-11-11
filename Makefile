@@ -4,7 +4,7 @@ OBJ = $(patsubst src/%.c, obj/%.o, $(SRC))
 DBFILE = ./mynewdb2.db
 EMPLOYEES = \
 	"Timmy H.,123 Sheshire Ln.,120" \
-	"JimmyJohn D.,456 Elm St.,80" \
+	"Jimmy D.,456 Elm St.,80" \
     "Jane S.,789 Maple Ave.,100" \
     "Alice B.,101 Oak Dr.,90"
 
@@ -19,6 +19,8 @@ run: clean default
 	./$(TARGET) -f $(DBFILE) -a "Bob B.,123 Elm St.,40" -l
 	./$(TARGET) -f $(DBFILE) -u "Jane S.,160" -l
 	./$(TARGET) -f $(DBFILE) -u "Jonny D.,180" -l
+	./$(TARGET) -f $(DBFILE) -d "Jane S." -l
+	./$(TARGET) -f $(DBFILE) -d "Alice G." -l
 
 default: $(TARGET)
 

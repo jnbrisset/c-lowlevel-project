@@ -16,7 +16,7 @@ void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
         printf("Employee %d\n", i);
         printf("\tName: %s\n", employees[i].name);
         printf("\tAddress: %s\n", employees[i].address);
-        printf("\tHourss: %d\n", employees[i].hours);
+        printf("\tHours: %d\n", employees[i].hours);
     }
 }
 
@@ -52,6 +52,30 @@ int search_for_employee(struct dbheader_t *dbhdr, struct employee_t *employees, 
     }    
 
     return -1;
+}
+
+int remove_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *employee) {
+    // Remove the first occurrence matching employee.
+    printf("%d\n", dbhdr->count);
+    int idx = search_for_employee(dbhdr, employees, employee);
+
+    if (idx == -1) {
+        return STATUS_ERROR;
+    }
+
+    for (; idx < dbhdr->count-1; idx++) {
+        employees[idx] = employees[idx+1];
+    }
+    dbhdr->count--;
+    printf("%d\n", dbhdr->count);
+    struct employee_t *temp = realloc(employees, dbhdr->count*sizeof(struct employee_t));
+    if (temp==NULL && dbhdr->count > 0) {
+        printf("Realloc failed.\n");
+        return STATUS_ERROR;
+    }
+    employees = temp;
+
+    return STATUS_SUCCESS;
 }
 
 int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employeesOut) {
@@ -100,6 +124,13 @@ int output_file(int fd, struct dbheader_t *dbhdr, struct employee_t *employees) 
         employees[i].hours = htonl(employees[i].hours);
         write(fd, &employees[i], sizeof(struct employee_t));
     }
+
+    off_t new_size = sizeof(struct dbheader_t) + (sizeof(struct employee_t) * realcount);
+    if (ftruncate(fd, new_size) !=0) {
+        perror("ftruncate");
+        return STATUS_ERROR;
+    }
+
     return STATUS_SUCCESS;
 }	
 

@@ -19,13 +19,14 @@ int main(int argc, char *argv[]) {
 	bool newfile = false;
 	char *addstring = NULL;
 	bool list = false;
+	char *delstring = NULL;
 	char *updatestring = NULL;  	// Comma separated value "Timmy H.,150"
 	int c;
     int dbfd = -1;
 	struct dbheader_t *dbhdr = NULL;
 	struct employee_t *employees = NULL;
 
-	while ((c = getopt(argc, argv, "nf:a:u:l")) != -1 ) {
+	while ((c = getopt(argc, argv, "nf:a:u:ld:")) != -1 ) {
 		switch (c) {
 			case 'n':
 				newfile = true;
@@ -41,6 +42,9 @@ int main(int argc, char *argv[]) {
 				break;
 			case 'u':
 				updatestring = optarg;
+				break;
+			case 'd':
+				delstring = optarg;
 				break;
 			case '?':
 				printf("Unknown option -%c\n", c);
@@ -99,6 +103,14 @@ int main(int argc, char *argv[]) {
 			printf("Updating employee hours failed. Employee not found.\n");
 			return 0;
 		}	
+	}
+
+	if (delstring) {
+		if (remove_employee(dbhdr, employees, delstring) == STATUS_ERROR) {
+			printf("Removing employee failed. Employee not found.\n");
+			return 0;
+		}
+		printf("Count following delete: %d\n", dbhdr->count);
 	}
 
 	if (list) {
